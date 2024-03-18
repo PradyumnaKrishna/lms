@@ -1,0 +1,41 @@
+{% extends "simple.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block nav %}
+<div style="align-items: end; display: inline-flex; gap: 10px">
+    {% if page.get_parent.specific.emblem %}
+        {% image page.get_parent.specific.emblem height-40 %}
+    {% endif %}
+
+    <h1 class="m-0 long_title">{{ page.title }}</h1>
+    <h1 class="m-0 short_title">{{ page.short_name }}</h1>
+</div>
+<div>
+    <a href="{{ page.get_parent.url }}" class="btn" style="text-transform: uppercase;">
+        Back to Institute
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div style="width: 100%; padding-top: 40px; padding-bottom: 40px; background: #F5F7FA; justify-content: space-between; align-items: center; display: inline-flex">
+        <div class="m-auto p-4" style="width: 1000px;">
+            <div style="flex-direction: column; gap: 6px; display: flex">
+                <p class="m-0" style="letter-spacing: 1px;font-size: medium; color: #FF6636;">{{ page.code }} &bull; {{ page.credit }} Credits</p>
+                <h1 class="m-0">{{ page.title }}</h1>
+            </div>
+            <div style="max-width: 984px;">
+                {{ page.description | richtext }}
+            </div>
+        </div>
+    </div>
+
+    <div class="p-4 m-auto" style="max-width: 800px;">
+        <h1>Topics</h1>
+
+        {{ page.topics|richtext }}
+    </div>
+{% endblock %}
