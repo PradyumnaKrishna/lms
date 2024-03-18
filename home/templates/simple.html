@@ -1,0 +1,84 @@
+{% load wagtailimages_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1D2026;
+        }
+
+        p {
+            font-family: 'Times New Roman', Times, serif;
+            color: #6E7485;
+            font-size: large;
+        }
+
+        a {
+            color: #FF6636;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    
+        .m-0 {
+            margin: 0;
+        }
+
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: justify;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+            justify-content: space-between;
+            align-items: end;
+            display: flex;
+        }
+
+        .vertical-line{
+            display: inline-block;
+            border-left: 2px solid #FF6636;
+            margin: 0 10px;
+            height: 40px;
+        }
+
+        {% block styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div style="width: 100%; display: inline-flex; align-items: end; gap: 10px;">
+            {% if page.logo %}
+                {% image page.logo height-40 %}
+            {% elif page.get_parent.specific.logo %}
+                {% image page.get_parent.specific.logo height-40 %}
+            {% endif %}
+            <span class="vertical-line"></span>
+            <div style="width: 100%; justify-content: space-between; align-items: center; gap: 8px; display: flex;">
+                {% block nav %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
