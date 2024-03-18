@@ -90,10 +90,8 @@
 <body>
     <div class="nav">
         <div style="width: 100%; display: inline-flex; align-items: end; gap: 10px;">
-            {% if page.logo %}
-                {% image page.logo height-40 %}
-            {% elif page.get_parent.specific.logo %}
-                {% image page.get_parent.specific.logo height-40 %}
+            {% if settings.settings.SiteSettings.logo %}
+                {% image settings.settings.SiteSettings.logo height-40 %}
             {% endif %}
             <span class="vertical-line"></span>
             <div style="width: 100%; justify-content: space-between; align-items: center; gap: 8px; display: flex;">
