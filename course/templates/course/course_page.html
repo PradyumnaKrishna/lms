@@ -1,7 +1,36 @@
 {% extends "simple.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
-{% block extra_css %}
+{% block styles %}
+.long_title {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .long_title {
+        display: block;
+    }
+    .short_title {
+        display: none;
+    }
+}
+
+.noti p {
+    margin: 4px 0;
+}
+
+.main {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+}
+
+@media (max-width: 769px) {
+    .main {
+        flex-direction: column-reverse;
+
+    }
+}
 {% endblock %}
 
 {% block nav %}
@@ -10,11 +39,11 @@
         {% image page.get_parent.specific.emblem height-40 %}
     {% endif %}
 
-    <h1 class="m-0 long_title">{{ page.title }}</h1>
-    <h1 class="m-0 short_title">{{ page.short_name }}</h1>
+    <h1 class="m-0 long_title">{{ page.get_parent.title }}</h1>
+    <h1 class="m-0 short_title">{{ page.get_parent.specific.short_name }}</h1>
 </div>
 <div>
-    <a href="{{ page.get_parent.url }}" class="btn" style="text-transform: uppercase;">
+    <a href="{{ page.get_parent.url }}" class="btn long_title" style="text-transform: uppercase;">
         Back to Institute
     </a>
 </div>
@@ -33,9 +62,59 @@
         </div>
     </div>
 
-    <div class="p-4 m-auto" style="max-width: 800px;">
-        <h1>Topics</h1>
+    <div class="main">
+        <div class="p-4 m-auto" style="text-align: center; width: 250px;">
+            <h2>Announcements</h2>
+            <div class="noti" style="text-align: justify;">
+                {% for announcement in page.announcements.all %}
+                    <div style="margin-top: 16px;">
+                        <h3 class="m-0">{{ announcement.title }}</h3>
+                        {{ announcement.body|richtext }}
+                        {% if announcement.attachment %}
+                            <a href="{{ announcement.attachment.url }}" style="align-items: center; gap: 10px; display: inline-flex;">
+                                <svg height="16" viewBox="0 0 19 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4.80171 19.5996C3.50871 19.5996 2.29771 19.0446 1.42371 18.1596C-0.271289 16.4436 -0.743289 13.4486 1.63271 11.0436L11.3807 1.17356C12.3687 0.173564 13.6257 -0.213436 14.8287 0.113564C16.0117 0.433564 16.9797 1.41456 17.2967 2.61156C17.6187 3.83156 17.2377 5.10456 16.2507 6.10456L6.92771 15.5446C6.39571 16.0836 5.79371 16.4026 5.18971 16.4666C4.59071 16.5306 4.01971 16.3366 3.61971 15.9316C2.89571 15.1956 2.79171 13.8146 3.99771 12.5946L10.5457 5.96456C10.8147 5.69256 11.2507 5.69256 11.5197 5.96456C11.7887 6.23656 11.7887 6.67856 11.5197 6.95056L4.97071 13.5816C4.40471 14.1536 4.35271 14.7006 4.59371 14.9456C4.69971 15.0516 4.85971 15.1006 5.04471 15.0796C5.32771 15.0506 5.65071 14.8636 5.95371 14.5586L15.2767 5.11956C15.9167 4.47156 16.1617 3.70956 15.9667 2.97456C15.8692 2.61514 15.6806 2.28699 15.419 2.02191C15.1574 1.75683 14.8318 1.56382 14.4737 1.46156C13.7477 1.26456 12.9937 1.51356 12.3537 2.16156L2.60571 12.0316C0.789711 13.8706 1.22471 15.9876 2.39671 17.1746C3.56971 18.3616 5.65871 18.8036 7.47571 16.9626L17.2237 7.09256C17.2873 7.02792 17.3631 6.97658 17.4467 6.94153C17.5303 6.90649 17.6201 6.88844 17.7107 6.88844C17.8014 6.88844 17.8911 6.90649 17.9747 6.94153C18.0583 6.97658 18.1341 7.02792 18.1977 7.09256C18.3271 7.22422 18.3996 7.40145 18.3996 7.58606C18.3996 7.77068 18.3271 7.9479 18.1977 8.07956L8.44971 17.9496C7.30071 19.1116 6.01371 19.5996 4.80171 19.5996Z"/>
+                                </svg>
+                                <p class="text m-0" style="color: #FF6636">{{ announcement.attachment.title }}</p>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
 
-        {{ page.topics|richtext }}
+        </div>
+        <div class="p-4 m-auto" style="max-width: 800px;">
+            <h1>Topics</h1>
+            <div style="font-size: large;">
+                {{ page.topics|richtext }}
+            </div>
+
+            <h1>Resources</h1>
+            <div class="noti">
+                {% for resource in page.get_children %}
+                    <div style="margin-top: 16px;">
+                        <h3 class="m-0">{{ resource.title }}</h3>
+                        {{ resource.specific.content | richtext }}
+                        <div>
+                            {% if resource.specific.attachment %}
+                                <a href="{{ notification.attachment.url }}" style="align-items: center; gap: 10px; display: inline-flex;">
+                                    <svg height="16" viewBox="0 0 19 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4.80171 19.5996C3.50871 19.5996 2.29771 19.0446 1.42371 18.1596C-0.271289 16.4436 -0.743289 13.4486 1.63271 11.0436L11.3807 1.17356C12.3687 0.173564 13.6257 -0.213436 14.8287 0.113564C16.0117 0.433564 16.9797 1.41456 17.2967 2.61156C17.6187 3.83156 17.2377 5.10456 16.2507 6.10456L6.92771 15.5446C6.39571 16.0836 5.79371 16.4026 5.18971 16.4666C4.59071 16.5306 4.01971 16.3366 3.61971 15.9316C2.89571 15.1956 2.79171 13.8146 3.99771 12.5946L10.5457 5.96456C10.8147 5.69256 11.2507 5.69256 11.5197 5.96456C11.7887 6.23656 11.7887 6.67856 11.5197 6.95056L4.97071 13.5816C4.40471 14.1536 4.35271 14.7006 4.59371 14.9456C4.69971 15.0516 4.85971 15.1006 5.04471 15.0796C5.32771 15.0506 5.65071 14.8636 5.95371 14.5586L15.2767 5.11956C15.9167 4.47156 16.1617 3.70956 15.9667 2.97456C15.8692 2.61514 15.6806 2.28699 15.419 2.02191C15.1574 1.75683 14.8318 1.56382 14.4737 1.46156C13.7477 1.26456 12.9937 1.51356 12.3537 2.16156L2.60571 12.0316C0.789711 13.8706 1.22471 15.9876 2.39671 17.1746C3.56971 18.3616 5.65871 18.8036 7.47571 16.9626L17.2237 7.09256C17.2873 7.02792 17.3631 6.97658 17.4467 6.94153C17.5303 6.90649 17.6201 6.88844 17.7107 6.88844C17.8014 6.88844 17.8911 6.90649 17.9747 6.94153C18.0583 6.97658 18.1341 7.02792 18.1977 7.09256C18.3271 7.22422 18.3996 7.40145 18.3996 7.58606C18.3996 7.77068 18.3271 7.9479 18.1977 8.07956L8.44971 17.9496C7.30071 19.1116 6.01371 19.5996 4.80171 19.5996Z"/>
+                                    </svg>
+                                    <p class="text m-0" style="color: #FF6636">{{ resource.specific.attachment.title }}</p>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="p-4 m-auto" style="text-align: center; width: 250px;">
+            <!-- <h2>Instructor</h2> -->
+        </div>
     </div>
+
+    
 {% endblock %}
