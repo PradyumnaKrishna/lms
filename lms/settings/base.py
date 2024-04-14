@@ -24,6 +24,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    "api",
     "home",
     "search",
     "course",
@@ -93,6 +94,12 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
+}
+
+
+LLM = {
+    "model": "gemini-pro",
+    "key": "",
 }
 
 

@@ -5,11 +5,11 @@ from wagtail.models import Page, Site
 from wagtail.documents.models import Document
 from wagtail.test.utils import WagtailPageTestCase
 
-from api.views import AnnouncementView
+from api.views import NotificationView
 from course.models import Announcement, CoursePage, Resource
 
 
-class AnnouncementViewTestCase(WagtailPageTestCase):
+class NotificationViewTestCase(WagtailPageTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
@@ -31,12 +31,12 @@ class AnnouncementViewTestCase(WagtailPageTestCase):
 
         root.add_child(instance=cls.course)
         cls.course.save_revision()
-        cls.view = AnnouncementView.as_view()
+        cls.view = NotificationView.as_view()
 
     def test_create_announcement(self):
         request = self.factory.post('/api/announcements/', {
             'title': 'Test Announcement',
-            'body': 'Test Body',
+            'body': 'Test Announcement Body',
             'course': self.course.pk,
         })
         response = self.view(request)

@@ -1,7 +1,7 @@
 from django.urls import path
-from api.views import AnnouncementView
+from api.views import NotificationView
 
 
 urlpatterns = [
-    path('announcements/', AnnouncementView.as_view(), name='announcements_api'),
+    path('notification/', NotificationView.as_view(), name='notify'),
 ]

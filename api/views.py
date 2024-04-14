@@ -1,50 +1,62 @@
-import base64
-import binascii
-
-from django.core.files.base import ContentFile
+import logging
+from enum import Enum
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
-from wagtail.documents.models import Document
-
-from course.models import CoursePage, Resource
+from api.agents.classification import ClassificationAgent
+from .llm import get_llm
 from .serializers import AnnouncementSerializer, ResourceSerializer
 
+logger = logging.getLogger(__name__)
 
 
-class AnnouncementView(APIView):
+class NotificationType(str, Enum):
+    ANNOUNCEMENT = "announcement"
+    RESOURCE = "resource"
+
+
+class NotificationView(APIView):
     parser_classes = [MultiPartParser]
 
     def post(self, request, format=None):
         data = request.data
         serializer = AnnouncementSerializer(data=data)
-        if serializer.is_valid():
-            if "attachment" in request.FILES:
-                parent = CoursePage.objects.get(pk=data["course"])
+        if "attachment" in data:
+            serializer = ResourceSerializer(data={
+                'course': data['course'],
+                'title': data['title'],
+                'content': data['body'],
+                'attachment': data['attachment']
+            })
 
-                attachment = request.FILES["attachment"]
-                filename = attachment.name
-                document = Document(title=filename, file=ContentFile(attachment.read(), name=filename))
-                document.save()
-
-                resource = Resource(
-                    title=data['title'],
-                    content=data['body'],
-                    attachment=document,
-                )
-
-                parent.add_child(instance=resource)
-                resource.save_revision().publish()
-
-                serializer = ResourceSerializer(resource)
+            if serializer.is_valid():
+                serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            if "attachment" in request.data:
-                return Response({"error": "attachment must be a file"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        llm = get_llm()
+        agent = ClassificationAgent(llm, NotificationType)
+
+        notification_type = None
+        try:
+            notification_type = agent.classify(data['body'])
+        except Exception as e:
+            logger.error(f"Error classifying: {e}")
+
+        if notification_type == NotificationType.RESOURCE:
+            serializer = ResourceSerializer(data={
+                'title': data['title'],
+                'content': data['body'],
+                'course': data['course']
+            })
+        else:
+            serializer = AnnouncementSerializer(data=data)
+
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
