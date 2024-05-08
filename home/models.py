@@ -1,3 +1,4 @@
+from django import forms
 from django.db import models
 
 from wagtail.admin.panels import FieldPanel, TitleFieldPanel, InlinePanel
@@ -5,7 +6,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 
 from .panels import TargetFieldPanel
@@ -76,7 +77,12 @@ class Semester(ClusterableModel):
     id = models.AutoField(primary_key=True)
     sem = models.IntegerField()
     program = ParentalKey(Program, on_delete=models.CASCADE, related_name='semesters')
-    courses = models.ManyToManyField('course.CoursePage')
+    courses = ParentalManyToManyField('course.CoursePage')
+
+    panels = [
+        FieldPanel('sem'),
+        FieldPanel('courses', widget=forms.CheckboxSelectMultiple),
+    ]
 
     def __str__(self):
-        return f"{self.program.code}: Semester {self.sem}"
+        return f"{self.program.name}: Semester {self.sem}"
