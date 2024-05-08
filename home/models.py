@@ -1,9 +1,12 @@
 from django.db import models
 
-from wagtail.admin.panels import FieldPanel, TitleFieldPanel
+from wagtail.admin.panels import FieldPanel, TitleFieldPanel, InlinePanel
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
+
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 
 from .panels import TargetFieldPanel
 
@@ -34,22 +37,46 @@ class InstitutePage(Page):
 
 
 @register_snippet
-class Department(models.Model):
+class Department(ClusterableModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
     institute = models.ForeignKey(InstitutePage, on_delete=models.CASCADE)
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('description'),
+        InlinePanel('programs', label="Programs")
+    ]
 
     def __str__(self):
         return self.name
     
 
 @register_snippet
-class Program(models.Model):
+class Program(ClusterableModel):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, blank=True, null=True, unique=True)
     description = models.TextField()
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = ParentalKey(Department, on_delete=models.CASCADE, related_name='programs')
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('code'),
+        FieldPanel('description'),
+        InlinePanel('semesters', label="Semesters")
+    ]
 
     def __str__(self):
         return self.name
+
+@register_snippet
+class Semester(ClusterableModel):
+    id = models.AutoField(primary_key=True)
+    sem = models.IntegerField()
+    program = ParentalKey(Program, on_delete=models.CASCADE, related_name='semesters')
+    courses = models.ManyToManyField('course.CoursePage')
+
+    def __str__(self):
+        return f"{self.program.code}: Semester {self.sem}"
