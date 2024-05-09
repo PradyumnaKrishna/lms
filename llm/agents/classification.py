@@ -9,6 +9,9 @@ from . import BaseAgent
 
 
 class ClassificationAgent(BaseAgent):
+    """
+    Classifies a message into a type obtained from an Enum.
+    """
 
     prompt: BasePromptTemplate
     parser: EnumOutputParser
@@ -21,6 +24,6 @@ class ClassificationAgent(BaseAgent):
 
         super().__init__(llm)
 
-    def classify(self, message: str) -> Enum:
+    def run(self, message: str) -> Enum:
         chain = self.prompt | self.llm | self.parser
         return chain.invoke({"message": message})

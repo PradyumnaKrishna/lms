@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
-from api.agents.classification import ClassificationAgent
-from .llm import get_llm
+from llm.agents.classification import ClassificationAgent
 from .serializers import AnnouncementSerializer, ResourceSerializer
+from .apps import APIConfig
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ class NotificationType(str, Enum):
 
 class NotificationView(APIView):
     parser_classes = [MultiPartParser]
+    llm = APIConfig.llm
 
     def post(self, request, format=None):
         data = request.data
@@ -38,12 +39,11 @@ class NotificationView(APIView):
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        llm = get_llm()
-        agent = ClassificationAgent(llm, NotificationType)
+        agent = ClassificationAgent(self.llm, NotificationType)
 
         notification_type = None
         try:
-            notification_type = agent.classify(data['body'])
+            notification_type = agent.run(data['body'])
         except Exception as e:
             logger.error(f"Error classifying: {e}")
 

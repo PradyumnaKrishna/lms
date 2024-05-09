@@ -18,8 +18,8 @@ class BaseAgent:
         self.llm = llm
 
     @abstractmethod
-    def classify(self, message: str):
+    def run(self, *args, **kwargs):
         """
-        Classify the message
+        runs the agent
         """
         pass
