@@ -4,3 +4,4 @@ langchain==0.1.19
 langchain-google-genai==1.0.1
 nltk==3.8.1
 unstructured[pdf]==0.13.7
+huey==2.5.0

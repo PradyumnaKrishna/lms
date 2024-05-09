@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from wagtail.models import Page
 from wagtail.fields import RichTextField
@@ -9,6 +11,7 @@ from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 
 from home.panels import TargetFieldPanel
+from llm.task import extract_topics
 
 
 class CoursePage(Page):
@@ -51,10 +54,20 @@ class Resource(Page):
     attachment = models.ForeignKey(
         Document, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )
+    under_process = models.BooleanField(default=False, blank=True)
+    topics = models.TextField(default="", blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('content', classname="full"),
+        FieldPanel('under_process'),
+        FieldPanel('topics')
     ]
 
     parent_page_types = ['course.CoursePage']
     subpage_types = []
+
+
+@receiver(post_save, sender=Resource)
+def topics_modelling(sender, instance, created, **kwargs):
+    if created:
+        extract_topics(instance)

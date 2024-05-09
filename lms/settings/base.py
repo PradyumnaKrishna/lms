@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import logging
 import os
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     "search",
     "course",
     "settings",
+    "huey.contrib.djhuey",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.contrib.settings",
@@ -100,6 +102,22 @@ DATABASES = {
 LLM = {
     "model": "gemini-pro",
     "key": "",
+}
+
+
+# Huey Background Worker
+
+HUEY = {
+    'name': 'lms',
+    'huey_class': 'huey.SqliteHuey',
+    'consumer': {
+        'blocking': True,  # Use blocking list pop instead of polling Redis.
+        'loglevel': logging.DEBUG,
+        'workers': 4,
+        'scheduler_interval': 1,
+        'simple_log': True,
+    },
+    "immediate": False,
 }
 
 
