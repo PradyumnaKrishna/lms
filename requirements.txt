@@ -6,3 +6,5 @@ nltk==3.8.1
 unstructured[pdf]==0.13.7
 huey==2.5.0
 markdown==3.6
+sentence-transformers==2.7.0
+langchain-chroma==0.1.0

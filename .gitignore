@@ -1,3 +1,13 @@
+# Environment
+.env
+.cache
+
+# Huey
+huey.db*
+
+# Vectorstore
+vector_db
+
 # Django project
 /media/
 /static/

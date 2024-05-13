@@ -14,8 +14,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import logging
 import os
 
+from lms.setup import _setup
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
+
+_setup(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -102,6 +106,15 @@ DATABASES = {
 LLM = {
     "model": "gemini-pro",
     "key": "",
+}
+
+VECTORSTORE = {
+    "store": "chroma",
+    "persist_directory": os.path.join(BASE_DIR, "vector_db"),
+    "embedding": {
+        "type": "huggingface",
+        "model": "mixedbread-ai/mxbai-embed-large-v1",
+    },
 }
 
 

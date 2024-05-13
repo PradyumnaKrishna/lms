@@ -54,6 +54,7 @@ class Resource(Page):
     under_process = models.BooleanField(default=False, blank=True)
     topics = models.TextField(default="", blank=True)
     summary = RichTextField(blank=True, null=True)
+    vectorstore_ids = models.TextField(default="", blank=True)
 
     content_panels = Page.content_panels + [
         FieldPanel('content', classname="full"),
