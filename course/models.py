@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 from wagtail.models import Page
@@ -47,7 +48,7 @@ class Announcement(ClusterableModel):
 
 
 class Resource(Page):
-    content = RichTextField()
+    content = RichTextField(blank=True, null=True)
     attachment = models.ForeignKey(
         Document, null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )
@@ -66,3 +67,45 @@ class Resource(Page):
 
     parent_page_types = ['course.CoursePage']
     subpage_types = []
+
+
+class QuestionPaper(Page):
+    course = ParentalKey(CoursePage, on_delete=models.CASCADE, related_name='question_papers')
+    is_created = models.BooleanField(default=False)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('course'),
+        FieldPanel('is_created'),
+        InlinePanel('questions', label="Questions"),
+    ]
+
+    parent_page_types = ['wagtailcore.Page']
+    subpage_types = []
+
+
+class Question(ClusterableModel):
+    id = models.UUIDField(primary_key=True, editable=False, unique=True, default=uuid.uuid4)
+    question_paper = ParentalKey(QuestionPaper, on_delete=models.CASCADE, related_name='questions')
+    question = models.TextField()
+
+    def __str__(self):
+        return self.question
+    
+    panels = [
+        FieldPanel('question_paper'),
+        FieldPanel('question'),
+        InlinePanel('answers', label="Answers"),
+    ]
+
+
+class Answer(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, unique=True, default=uuid.uuid4)
+    question = ParentalKey(Question, on_delete=models.CASCADE, related_name="answers")
+    answer = models.TextField()
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name_plural = "Answers"
