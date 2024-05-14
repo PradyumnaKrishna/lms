@@ -1,9 +1,7 @@
 from typing import List
 
 from langchain.output_parsers import PydanticOutputParser
-
 from langchain_core.prompts import PromptTemplate
-
 from pydantic import BaseModel, Field
 
 from . import BaseAgent
@@ -43,10 +41,12 @@ class QAAgent(BaseAgent):
         question_paper = QuestionPaper(questions=[])
         for topicmap in mapping:
             question_paper.questions.extend(
-                chain.invoke({
-                    "topics": ", ".join(topicmap.topics),
-                    "context": topicmap.document.page_content,
-                }).questions
+                chain.invoke(
+                    {
+                        "topics": ", ".join(topicmap.topics),
+                        "context": topicmap.document.page_content,
+                    }
+                ).questions
             )
 
         return question_paper

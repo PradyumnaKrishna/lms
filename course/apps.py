@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class CourseConfig(AppConfig):
-    name = 'course'
+    name = "course"
     verbose_name = "Course"
 
     def ready(self):

@@ -3,11 +3,9 @@ from typing import List
 from langchain.chains.summarize import load_summarize_chain
 from langchain.docstore.document import Document
 from langchain.output_parsers import BooleanOutputParser, PydanticOutputParser
-
 from langchain_core.language_models import BaseLLM
 from langchain_core.prompts import PromptTemplate
 from langchain_core.vectorstores import VectorStoreRetriever
-
 from pydantic import BaseModel, Field
 from pydantic.v1 import BaseModel as V1BaseModel
 
@@ -43,10 +41,12 @@ class MapTopics(BaseAgent):
         mapping = []
         for topic in topics.topics:
             doc = retriever.invoke(topic)[0]
-            is_relevant = chain.invoke({
-                "topic": topic,
-                "context": doc,
-            })
+            is_relevant = chain.invoke(
+                {
+                    "topic": topic,
+                    "context": doc,
+                }
+            )
             if is_relevant:
                 for tm in mapping:
                     if tm.document == doc:
@@ -82,7 +82,7 @@ class TopicModelling(BaseAgent):
             self.llm,
             chain_type="map_reduce",
             map_prompt=self.prompt,
-            combine_prompt=self.combine_prompt
+            combine_prompt=self.combine_prompt,
         )
 
         summary = chain.run(docs)

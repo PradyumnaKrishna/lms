@@ -1,12 +1,11 @@
 from typing import Optional
 
 import nltk
-from nltk.corpus import stopwords
 
 from langchain.docstore.document import Document
 from langchain.text_splitter import TextSplitter
-
 from langchain_community.document_loaders import UnstructuredPDFLoader
+from nltk.corpus import stopwords
 
 
 def load_document(file: str, splitter: Optional[TextSplitter] = None):
@@ -28,14 +27,20 @@ def preprocess(document: Document):
 
     text = document.page_content
     result = ""
-    lines = text.split('\n')
+    lines = text.split("\n")
 
     text = []
     for line in lines:
         tokens = nltk.word_tokenize(line)
-        stop_words = set(stopwords.words(['english']))
-        result = " ".join([token.lower() for token in tokens if (token.isalpha() or token.isnumeric()) and token not in stop_words])
+        stop_words = set(stopwords.words(["english"]))
+        result = " ".join(
+            [
+                token.lower()
+                for token in tokens
+                if (token.isalpha() or token.isnumeric()) and token not in stop_words
+            ]
+        )
         text.append(result)
-    
+
     text = "\n".join(text)
     return Document(page_content=text, metadata=document.metadata)

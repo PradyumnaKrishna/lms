@@ -2,8 +2,8 @@ from enum import Enum
 from typing import Type
 
 from langchain.output_parsers import EnumOutputParser
-from langchain_core.prompts import PromptTemplate, BasePromptTemplate
 from langchain_core.language_models import BaseLLM
+from langchain_core.prompts import BasePromptTemplate, PromptTemplate
 
 from . import BaseAgent
 

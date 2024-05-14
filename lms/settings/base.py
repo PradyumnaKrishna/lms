@@ -16,6 +16,7 @@ import os
 
 from lms.setup import _setup
 
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
@@ -121,14 +122,14 @@ VECTORSTORE = {
 # Huey Background Worker
 
 HUEY = {
-    'name': 'lms',
-    'huey_class': 'huey.SqliteHuey',
-    'consumer': {
-        'blocking': True,  # Use blocking list pop instead of polling Redis.
-        'loglevel': logging.DEBUG,
-        'workers': 4,
-        'scheduler_interval': 1,
-        'simple_log': True,
+    "name": "lms",
+    "huey_class": "huey.SqliteHuey",
+    "consumer": {
+        "blocking": True,  # Use blocking list pop instead of polling Redis.
+        "loglevel": logging.DEBUG,
+        "workers": 4,
+        "scheduler_interval": 1,
+        "simple_log": True,
     },
     "immediate": False,
 }

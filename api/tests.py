@@ -1,8 +1,7 @@
-from django.test import TestCase, RequestFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
-
-from wagtail.models import Page, Site
+from django.test import RequestFactory, TestCase
 from wagtail.documents.models import Document
+from wagtail.models import Page, Site
 from wagtail.test.utils import WagtailPageTestCase
 
 from api.views import NotificationView
@@ -14,7 +13,7 @@ class NotificationViewTestCase(WagtailPageTestCase):
     def setUpTestData(cls):
         cls.factory = RequestFactory()
         root = Page.get_first_root_node()
-        
+
         Site.objects.create(
             hostname="testserver",
             root_page=root,
@@ -22,11 +21,11 @@ class NotificationViewTestCase(WagtailPageTestCase):
             site_name="testserver",
         )
         cls.course = CoursePage(
-            title='Test Course',
+            title="Test Course",
             description="test",
-            code='TST123',
+            code="TST123",
             credit=3,
-            topics='Test Topics'
+            topics="Test Topics",
         )
 
         root.add_child(instance=cls.course)
@@ -34,24 +33,30 @@ class NotificationViewTestCase(WagtailPageTestCase):
         cls.view = NotificationView.as_view()
 
     def test_create_announcement(self):
-        request = self.factory.post('/api/announcements/', {
-            'title': 'Test Announcement',
-            'body': 'Test Announcement Body',
-            'course': self.course.pk,
-        })
+        request = self.factory.post(
+            "/api/announcements/",
+            {
+                "title": "Test Announcement",
+                "body": "Test Announcement Body",
+                "course": self.course.pk,
+            },
+        )
         response = self.view(request)
-        
+
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Resource.objects.count(), 0)
         self.assertEqual(Announcement.objects.count(), 1)
 
     def test_create_resource(self):
-        request = self.factory.post('/api/announcements/', {
-            'title': 'test',
-            'body': 'Test Body',
-            'course': self.course.pk,
-            'attachment': SimpleUploadedFile("file.txt", b"file_content"),
-        })
+        request = self.factory.post(
+            "/api/announcements/",
+            {
+                "title": "test",
+                "body": "Test Body",
+                "course": self.course.pk,
+                "attachment": SimpleUploadedFile("file.txt", b"file_content"),
+            },
+        )
         response = self.view(request)
 
         self.assertEqual(response.status_code, 201)
@@ -64,25 +69,31 @@ class NotificationViewTestCase(WagtailPageTestCase):
         self.assertEqual(attachment_content, b"file_content")
 
     def test_create_resource_with_invalid_data(self):
-        request = self.factory.post('/api/announcements/', {
-            'title': 'test',
-            'body': 'Test Body',
-            'course': -1,
-        })
+        request = self.factory.post(
+            "/api/announcements/",
+            {
+                "title": "test",
+                "body": "Test Body",
+                "course": -1,
+            },
+        )
         response = self.view(request)
-        
+
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Resource.objects.count(), 0)
 
     def test_create_resource_with_invalid_attachment(self):
-        request = self.factory.post('/api/announcements/', {
-            'title': 'test',
-            'body': 'Test Body',
-            'course': self.course.pk,
-            'attachment': 'invalid_attachment',
-        })
+        request = self.factory.post(
+            "/api/announcements/",
+            {
+                "title": "test",
+                "body": "Test Body",
+                "course": self.course.pk,
+                "attachment": "invalid_attachment",
+            },
+        )
         response = self.view(request)
-        
+
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Resource.objects.count(), 0)
         self.assertEqual(Document.objects.count(), 0)

@@ -1,10 +1,10 @@
 import json
 import uuid
+
 from huey.contrib.djhuey import task
 
-from course.models import CoursePage, Resource, QuestionPaper, Question, Answer
+from course.models import Answer, CoursePage, Question, QuestionPaper, Resource
 from home.models import HomePage, InstitutePage
-
 from llm.tasks import _generate_paper
 
 
@@ -25,7 +25,7 @@ def generate_paper(course_id: int):
 
     topics = []
     for resource in resources:
-            topics.extend(json.loads(resource.specific.topics))
+        topics.extend(json.loads(resource.specific.topics))
 
     paper = _generate_paper(course_id, topics).get(blocking=True).questions
 
@@ -33,12 +33,10 @@ def generate_paper(course_id: int):
     for _question in paper:
         question = Question(question=_question.question)
         question.answers = [
-            Answer(
-                answer=answer,
-                is_correct=_question.answer.lower() == answer.lower()
-            ) for answer in _question.options
+            Answer(answer=answer, is_correct=_question.answer.lower() == answer.lower())
+            for answer in _question.options
         ]
         questions.append(question)
-    
+
     question_paper.questions = questions
     question_paper.save()

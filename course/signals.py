@@ -1,13 +1,18 @@
 import json
+
 import markdown
 
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
-
 from huey.contrib.djhuey import db_task
 
 from llm.documents.loader import load_document
-from llm.tasks import extract_topics, summarize_documents, store_embeddings, delete_embeddings
+from llm.tasks import (
+    delete_embeddings,
+    extract_topics,
+    store_embeddings,
+    summarize_documents,
+)
 
 from .models import Resource
 

@@ -4,6 +4,6 @@ from llm import get_llm
 
 
 class APIConfig(AppConfig):
-    name = 'api'
+    name = "api"
     verbose_name = "API"
     llm = get_llm()

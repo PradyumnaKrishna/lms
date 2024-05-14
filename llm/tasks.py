@@ -1,15 +1,15 @@
 from typing import List
 
 from huey.contrib.djhuey import task
-
-from langchain.docstore.document import Document
 from langchain.chains.summarize import load_summarize_chain
+from langchain.docstore.document import Document
 
-from . import get_llm
 from llm.agents.qa import QAAgent, QuestionPaper
-from llm.agents.topics import TopicModelling, MapTopics, Topics
+from llm.agents.topics import MapTopics, TopicModelling, Topics
 from llm.documents.loader import preprocess
 from llm.documents.vectorstore import get_vectorstore
+
+from . import get_llm
 
 
 @task()
@@ -49,9 +49,7 @@ def delete_embeddings(ids: List[str]):
 @task()
 def _generate_paper(course_id: int, topics: List[str]) -> QuestionPaper:
     store = get_vectorstore()
-    retriever = store.as_retriever(
-        search_kwargs={"k": 1, "filter": dict(course_id=course_id)}
-    )
+    retriever = store.as_retriever(search_kwargs={"k": 1, "filter": dict(course_id=course_id)})
 
     llm = get_llm()
     agent = MapTopics(llm)

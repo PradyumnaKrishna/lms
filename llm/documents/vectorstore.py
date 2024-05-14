@@ -2,11 +2,13 @@ from functools import lru_cache
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-
+from langchain_community.embeddings.huggingface import (
+    HuggingFaceEmbeddings,
+    HuggingFaceInferenceAPIEmbeddings,
+)
+from langchain_community.vectorstores.chroma import Chroma
 from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import VectorStore
-from langchain_community.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings, HuggingFaceEmbeddings
-from langchain_community.vectorstores.chroma import Chroma
 
 
 def setup_embedding(conf: dict) -> Embeddings:
@@ -45,5 +47,5 @@ def get_vectorstore() -> VectorStore:
             embedding_function=embedding_function,
             persist_directory=persist_directory,
         )
-        
+
     raise ImproperlyConfigured("VECTORSTORE 'type' not configured or not supported")
