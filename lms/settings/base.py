@@ -192,7 +192,6 @@ STORAGES = {
         "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
         "OPTIONS": {
             "bucket_name": os.environ.get("GS_BUCKET_NAME"),
-            "credentials": os.environ.get("GS_CREDENTIALS"),
         },
     },
     # ManifestStaticFilesStorage is recommended in production, to prevent
