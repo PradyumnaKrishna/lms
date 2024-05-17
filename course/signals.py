@@ -36,7 +36,9 @@ def delete_resource(sender, instance: Resource, **kwargs):
 @db_task()
 def process_resource(resource: Resource):
 
-    docs = load_document(resource.attachment.file.path)
+    data = resource.attachment.file.read()
+
+    docs = load_document(data)
     vs_task = store_embeddings(
         docs,
         resource.get_parent().id,

@@ -1,3 +1,5 @@
+import tempfile
+
 from typing import Optional
 
 import nltk
@@ -8,10 +10,16 @@ from langchain_community.document_loaders import UnstructuredPDFLoader
 from nltk.corpus import stopwords
 
 
-def load_document(file: str, splitter: Optional[TextSplitter] = None):
+def load_document(data: bytes, splitter: Optional[TextSplitter] = None):
 
-    loader = UnstructuredPDFLoader(file)
-    return loader.load_and_split(splitter)
+    with tempfile.NamedTemporaryFile() as tmp:
+        with open(tmp.name, "wb") as f:
+            f.write(data)
+
+        print(tmp.name)
+
+        loader = UnstructuredPDFLoader(tmp.name)
+        return loader.load_and_split(splitter)
 
 
 def preprocess(document: Document):
