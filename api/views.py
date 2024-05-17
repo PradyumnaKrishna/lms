@@ -11,6 +11,8 @@ from llm.agents.classification import ClassificationAgent
 
 from .apps import APIConfig
 from .serializers import AnnouncementSerializer, ResourceSerializer
+from course.models import QuestionPaper, CoursePage
+from course.tasks import generate_paper
 
 
 logger = logging.getLogger(__name__)
@@ -68,3 +70,21 @@ class NotificationView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GeneratePaperView(APIView):
+    def post(self, request, format=None):
+        course_id = request.data.get("course_id")
+
+        course = CoursePage.objects.get(id=course_id)
+        question_paper = QuestionPaper.objects.filter(course=course, live=False)
+
+        if question_paper.exists():
+            return Response(
+                {"message": "Already a request is submitted for this course. Try again later."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        generate_paper(course_id)
+        response_data = {"message": "Request submitted successfully", "course_id": course_id}
+        return Response(response_data, status=status.HTTP_200_OK)

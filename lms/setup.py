@@ -8,8 +8,8 @@ def _setup(base_dir):
 
         import nltk
 
-        nltk.download("stopwords", quiet=True)
-        nltk.download("punkt", quiet=True)
+        nltk.download("stopwords", quiet=True, download_dir=nltk_data)
+        nltk.download("punkt", quiet=True, download_dir=nltk_data)
 
     if "HF_HOME" not in os.environ:
         hf_home = os.path.join(base_dir, ".cache", "huggingface")

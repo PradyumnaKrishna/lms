@@ -29,6 +29,9 @@ class CoursePage(Page):
     parent_page_types = ["home.InstitutePage"]
     subpage_types = ["course.Resource"]
 
+    def generating_paper(self):
+        return self.question_papers.filter(live=False).exists()
+
 
 class Announcement(ClusterableModel):
     id = models.AutoField(primary_key=True)

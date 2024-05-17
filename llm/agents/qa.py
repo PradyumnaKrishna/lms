@@ -28,7 +28,8 @@ class QAAgent(BaseAgent):
     prompt = PromptTemplate.from_template(
         """
         You are a smart assistant designed to help graduate students practicing exam with multiple choice questions.
-        Given a piece of text, you must come up with some question and answer pairs from the topics provided that can be used to test a student's abilities.
+        Come up with some question and answer pairs from the topics provided that can be used to test a student's abilities.
+        Utilize the text provided in framing the questions, and make sure the questions are relevant to the topics provided.
         When coming up with this question/answer pair, you must respond in the following format: {instructions}
         The questions must come from the following topics: {topics}
 

@@ -20,14 +20,18 @@ def generate_paper(course_id: int):
         home = HomePage.objects.get()
         home.add_child(instance=parent)
 
-    question_paper = QuestionPaper(course=course, title=uuid.uuid4())
+    question_paper = QuestionPaper(course=course, live=False, title=uuid.uuid4())
     parent.add_child(instance=question_paper)
 
     topics = []
     for resource in resources:
         topics.extend(json.loads(resource.specific.topics))
 
-    paper = _generate_paper(course_id, topics).get(blocking=True).questions
+    try:
+        paper = _generate_paper(course_id, topics).get(blocking=True).questions
+    except Exception as e:
+        question_paper.delete()
+        raise e
 
     questions = []
     for _question in paper:
@@ -39,4 +43,5 @@ def generate_paper(course_id: int):
         questions.append(question)
 
     question_paper.questions = questions
+    question_paper.live = True
     question_paper.save()

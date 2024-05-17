@@ -1,21 +1,36 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "simple.html" %}
+{% load wagtailcore_tags %}
 
-{% block body_class %}template-homepage{% endblock %}
+{% block styles %}
+.long_title {
+    display: none;
+}
 
-{% block extra_css %}
+@media (min-width: 768px) {
+    .long_title {
+        display: block;
+    }
+    .short_title {
+        display: none;
+    }
+}
+.long_title 
+{% endblock %}
 
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-<link rel="stylesheet" href="{% static 'css/welcome_page.css' %}">
-{% endblock extra_css %}
+{% block nav %}
+<div style="align-items: center; display: inline-flex; gap: 10px">
+    <h1 class="m-0 long_title">Learning Management System</h1>
+    <h1 class="m-0 short_title">LMS</h1>
+</div>
+{% endblock %}
 
 {% block content %}
+<div class="m-auto p-4" style="max-width: 800px;">
 
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-{% include 'home/welcome_page.html' %}
-
-{% endblock content %}
+    <h2>Institutions</h2>
+    {% for institute in page.get_children.live %}
+        <a href="{% pageurl institute %}" style="align-items: center; gap: 10px; display: inline-flex;"><h3 class="m-0" style="color: inherit;">{{ institute.title }}</h3> <svg height="16" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 512 512"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></a>
+        {{ institute.specific.intro | richtext }}
+    {% endfor %}
+</div>
+{% endblock %}

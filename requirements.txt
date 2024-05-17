@@ -8,3 +8,5 @@ huey==2.5.0
 markdown==3.6
 sentence-transformers==2.7.0
 langchain-chroma==0.1.0
+whitenoise==6.6.0
+django-storages[google]==1.14.3

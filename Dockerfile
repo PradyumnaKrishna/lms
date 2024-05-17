@@ -1,5 +1,5 @@
 # Use an official Python runtime based on Debian 10 "buster" as a parent image.
-FROM python:3.8.1-slim-buster
+FROM python:3.9-slim
 
 # Add user that will be used in the container.
 RUN useradd wagtail
@@ -18,10 +18,10 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt-get update --yes --quiet && apt-get install --yes --quiet --no-install-recommends \
     build-essential \
     libpq-dev \
-    libmariadbclient-dev \
     libjpeg62-turbo-dev \
     zlib1g-dev \
     libwebp-dev \
+    supervisor \
  && rm -rf /var/lib/apt/lists/*
 
 # Install the application server.
@@ -42,19 +42,10 @@ RUN chown wagtail:wagtail /app
 # Copy the source code of the project into the container.
 COPY --chown=wagtail:wagtail . .
 
-# Use user "wagtail" to run the build commands below and the server itself.
-USER wagtail
+RUN mv docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Collect static files.
-RUN python manage.py collectstatic --noinput --clear
+RUN su -c "python manage.py collectstatic --noinput --clear" wagtail
 
-# Runtime command that executes when "docker run" is called, it does the
-# following:
-#   1. Migrate the database.
-#   2. Start the application server.
-# WARNING:
-#   Migrating database at the same time as starting the server IS NOT THE BEST
-#   PRACTICE. The database should be migrated manually or using the release
-#   phase facilities of your hosting platform. This is used only so the
-#   Wagtail instance can be started with a simple "docker run" command.
-CMD set -xe; python manage.py migrate --noinput; gunicorn lms.wsgi:application
+ENV DJANGO_SETTINGS_MODULE=lms.settings.production
+CMD ["/usr/bin/supervisord"]

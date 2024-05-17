@@ -1,0 +1,74 @@
+{% extends "simple.html" %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% block styles %}
+.long_title {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .long_title {
+        display: block;
+    }
+    .short_title {
+        display: none;
+    }
+}
+
+ul {
+    font-size: large;
+    color: #6E7485;
+}
+{% endblock %}
+
+{% block nav %}
+<div style="align-items: center; display: inline-flex; gap: 10px">
+    
+    <h1 class="m-0 long_title" style="padding-top: 8px;">{{ page.course.title }}</h1>
+    <h1 class="m-0 short_title">{{ page.get_parent.specific.code }}</h1>
+</div>
+<div>
+    <a href="{{ page.course.url }}" class="btn long_title" style="text-transform: uppercase;">
+        Back to Course
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="m-auto p-4" style="max-width: 800px;">
+    <h1>Questions</h1>
+
+    {% for question in page.questions.all %}
+    <div style="padding-bottom: 1em;">
+        <label style="font-weight: bold; font-size:large;">{{question.question}}</label>
+        <br>
+        {% for answer in question.answers.all %}
+            <input name="{{question.id}}" type="radio" id="{{answer.id}}" onclick="check('{{answer.id}}', '{{answer.is_correct}}')">
+            <label for="{{answer.id}}" style="font-size: large;">{{answer.answer}}</label>
+            <br>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function check(id, is_correct) {
+        label = document.querySelector('[for="' + id + '"]');
+
+        if (is_correct == 'True') {
+            label.style.color = "green";
+        } else {
+            label.style.color = "red";
+            label.style.textDecoration = "line-through";
+        }
+
+        document.getElementById(id).disabled = true;
+    }
+</script>
+
+{% endblock %}
