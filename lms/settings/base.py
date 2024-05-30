@@ -189,10 +189,7 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-STORAGES
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-        "OPTIONS": {
-            "bucket_name": os.environ.get("GS_BUCKET_NAME"),
-        },
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     # ManifestStaticFilesStorage is recommended in production, to prevent
     # outdated JavaScript / CSS assets being served from cache
