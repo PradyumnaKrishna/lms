@@ -16,8 +16,6 @@ def load_document(data: bytes, splitter: Optional[TextSplitter] = None):
         with open(tmp.name, "wb") as f:
             f.write(data)
 
-        print(tmp.name)
-
         loader = UnstructuredPDFLoader(tmp.name)
         return loader.load_and_split(splitter)
 
