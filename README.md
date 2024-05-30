@@ -50,6 +50,16 @@ These features are utilizes the following LLM Agents:
 * `MapTopics`: Generates a mapping of document and topics using similarity scores.
 * `QAAgent`: Generates questions from the topics map (a mapping between document and topics).
 
+### Demo
+
+**Resource Processing**: Summarization and Topic Extraction
+
+![Resource Processing](docs/images/resource-processing.gif)
+
+**Question Paper Generation**
+
+![Question Paper Generation](docs/images/question-generation.gif)
+
 ## Setup
 
 To run this project locally, you will need python 3.8+.
